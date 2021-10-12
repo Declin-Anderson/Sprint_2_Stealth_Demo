@@ -15,9 +15,16 @@ public class Guard : MonoBehaviour
 
     public float DetectionRange = 5;
     private float BaseDetectionRange;
+    private bool IsAlerted = false;
+    private bool AlertCooldown = false;
 
     private IEnumerator CoStop;
     private IEnumerator CoChase;
+
+    private GameObject Player;
+    private Transform PlayerTransform;
+
+    private Stealth2 ST;
 
     // Start is called before the first frame update
     void Start()
@@ -28,9 +35,28 @@ public class Guard : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Vector3 DistToPlayer = PlayerTransform.position - transform.position;
+        DistToPlayer.y = 0;
+        if (DistToPlayer.magnitude < DetectionRange && !IsAlerted && !AlertCooldown)
+        {
+            Debug.Log("Found");
+
+            CoChase = Alerted();
+            if (CoStop != null)
+            {
+                StopCoroutine(CoStop);
+            }
+            StartCoroutine(CoChase);
+        }
+        else if (DistToPlayer.magnitude < 1f && IsAlerted)
+        {
+            CoChase = Caught();
+            StartCoroutine(CoChase);
+        }
+
         Vector3 DistToGoal = CurrentGoal.position - transform.position;
         DistToGoal.y = 0;
-        if (DistToGoal.magnitude < 0.5)
+        if (DistToGoal.magnitude < 0.5 && !IsAlerted)
         {
             var CheckLookout = System.Array.Exists(LookoutGoals, x => x == RouteCheckpoint);
 
@@ -67,10 +93,33 @@ public class Guard : MonoBehaviour
     private IEnumerator LongGoalStop()
     {
         yield return new WaitForSeconds(1.0f);
-        //DetectionRange = BaseDetectionRange * 2;
+        DetectionRange = BaseDetectionRange * 2;
         yield return new WaitForSeconds(2.0f);
-        //DetectionRange = BaseDetectionRange;
+        DetectionRange = BaseDetectionRange;
         Agent.destination = CurrentGoal.position;
+    }
+
+    private IEnumerator Alerted()
+    {
+        IsAlerted = true;
+        Agent.destination = transform.position;
+        Agent.areaMask = -1;
+        DetectionRange = BaseDetectionRange;
+        yield return new WaitForSeconds(1.0f);
+        Agent.destination = PlayerTransform.position;
+    }
+
+    private IEnumerator Caught()
+    {
+        Agent.destination = transform.position;
+        AlertCooldown = true;
+        IsAlerted = false;
+        yield return new WaitForSeconds(1.0f);
+        Debug.Log("got you");
+        Debug.Log("returning to route");
+        Agent.destination = CurrentGoal.position;
+        yield return new WaitForSeconds(5.0f);
+        AlertCooldown = false;
     }
 
     public void GenerateGuard(Transform[] InGoals, int[] InLookoutGoals)
@@ -78,6 +127,10 @@ public class Guard : MonoBehaviour
         Goals = InGoals;
         LookoutGoals = InLookoutGoals;
 
+        BaseDetectionRange = DetectionRange;
+
+        Player = GameObject.FindGameObjectWithTag("Player");
+        PlayerTransform = Player.GetComponent<Transform>();
         Agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
 
         CurrentGoal = Goals[RouteCheckpoint];
