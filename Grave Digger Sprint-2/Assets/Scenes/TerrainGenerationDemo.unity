@@ -159,7 +159,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fd6398be6b5d344f91d3ff2d9d02b0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  M_Speed: 5
+  M_Speed: 4
 --- !u!136 &238275100
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -672,7 +672,7 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
-  - component: {fileID: 963194230}
+  - component: {fileID: 963194231}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -758,7 +758,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Parent: {fileID: 238275098}
---- !u!114 &963194230
+--- !u!114 &963194231
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -767,11 +767,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 963194225}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d261f94b984c68b48b9f62fb300231c6, type: 3}
+  m_Script: {fileID: 11500000, guid: c3e6fabbdbe1e1a4686e6e5bb283b0d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 963194227}
-  target: {fileID: 238275103}
+  Player: {fileID: 238275098}
+  speed: 7
+  OffSet: 3.5
 --- !u!4 &1242489586 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 606229fbc85b04d4c89d0d3e6b92d746, type: 3}
