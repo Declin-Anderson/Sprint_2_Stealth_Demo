@@ -121,6 +121,15 @@ public class Guard : MonoBehaviour
         yield return new WaitForSeconds(5.0f);
         AlertCooldown = false;
     }
+    
+    private IEnumerator Evidence()
+    {
+        
+        Debug.Log("i got you now");
+        ST.AlertIncrease(1);
+
+        yield return new WaitForSeconds(0);
+    }
 
     public void GenerateGuard(Transform[] InGoals, int[] InLookoutGoals)
     {
@@ -136,4 +145,9 @@ public class Guard : MonoBehaviour
         CurrentGoal = Goals[RouteCheckpoint];
         Agent.destination = CurrentGoal.position;
     }
+    
+    //private PowerUp()
+    //{
+
+    //}
 }

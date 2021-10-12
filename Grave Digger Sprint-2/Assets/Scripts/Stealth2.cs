@@ -11,6 +11,15 @@ public class Stealth2 : MonoBehaviour
 
     bool DecayStarted = false;
     int DecayTime = 60;
+
+    void update()
+    {
+        if(Input.GetKeyDown("f"))
+        {
+            AlertIncrease(1);
+        }
+       
+    }
     
 
 
