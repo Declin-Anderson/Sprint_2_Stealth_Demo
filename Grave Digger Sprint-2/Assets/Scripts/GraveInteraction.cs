@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//using cakeslice;
+using cakeslice;
 
 public class GraveInteraction : MonoBehaviour
 {
@@ -22,11 +22,11 @@ public class GraveInteraction : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        //OutlineObject.GetComponent<Outline>().color = 1;
+        OutlineObject.GetComponent<Outline>().color = 1;
     }
 
     private void OnTriggerExit(Collider other)
     {
-        //OutlineObject.GetComponent<Outline>().color = 0;
+        OutlineObject.GetComponent<Outline>().color = 0;
     }
 }
