@@ -72,6 +72,7 @@ public class MapGeneration : MonoBehaviour
         NavMeshBuilder.ClearAllNavMeshes();
         NavMeshBuilder.BuildNavMesh();
 
+        // Hard coding in guard path for testing purposes
         Transform[] GuardPath = new Transform[4];
         GuardPath[0] = TileMap[3, 3].transform;
         GuardPath[1] = TileMap[3, 5].transform;
