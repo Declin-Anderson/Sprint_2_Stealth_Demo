@@ -15,23 +15,39 @@ public class Guard : MonoBehaviour
     // The position of the tile the guard currently has in their patrol route
     private Transform CurrentGoal;
 
+    // Used to hold the point that the guard is currently investigating
+    private Vector3 CurrentInvestigation = new Vector3();
+
     // The position of the tile in the guard's patrol route array that they are currently moving to
     private int RouteCheckpoint = 1;
 
     // The distance the guard has to be from the player to be alerted (Does not catch the player yet)
-    public float DetectionRange = 5;
+    public float DetectionRange = 4.0f;
 
     // The base detection range without any modifiers
     private float BaseDetectionRange;
 
+    // The distance the guard has to be from the player to catch them
+    private float CatchRange = 1.0f;
+
+    // The base catch range without any modifiers
+    private float BaseCatchRange;
+
+    // Multiplier for how long it will take a guard to react to noise
+    private float ReactionMultiplier = 1.0f;
+
     // Used to signify that the guard is currently alerted by a noise
     private bool IsAlerted = false;
+
+    // Used to check if guard is currently moving to investigate a noise
+    private bool IsInvestigating = false;
 
     // A cooldown boolean to prevent a guard from immediatly investigating a new noise after finishing another investigation
     private bool AlertCooldown = false;
 
     private IEnumerator CoStop;
     private IEnumerator CoChase;
+    private IEnumerator CoInvestigate;
 
     private GameObject Player;
     private Transform PlayerTransform;
@@ -54,15 +70,17 @@ public class Guard : MonoBehaviour
         {
             Debug.Log("Found");
 
+            StopAllCoroutines();
+
             CoChase = Alerted();
-            if (CoStop != null)
-            {
-                StopCoroutine(CoStop);
-            }
             StartCoroutine(CoChase);
         }
-        else if (DistToPlayer.magnitude < 1f && IsAlerted)
+        else if (DistToPlayer.magnitude < CatchRange && IsAlerted)
         {
+            if (CoChase != null)
+            {
+                StopCoroutine(CoChase);
+            }
             CoChase = Caught();
             StartCoroutine(CoChase);
         }
@@ -72,7 +90,7 @@ public class Guard : MonoBehaviour
         if (DistToGoal.magnitude < 0.5 && !IsAlerted)
         {
             var CheckLookout = System.Array.Exists(LookoutGoals, x => x == RouteCheckpoint);
-            Agent.areaMask = 7;
+            Agent.areaMask = 15;
 
             if (RouteCheckpoint + 1 < Goals.Length)
             {
@@ -96,6 +114,18 @@ public class Guard : MonoBehaviour
 
             StartCoroutine(CoStop);
         }
+
+        if (IsInvestigating)
+        {
+            Vector3 DistToInvestigation = CurrentInvestigation - transform.position;
+            if (DistToInvestigation.magnitude < 0.5f)
+            {
+                StopAllCoroutines();
+
+                CoInvestigate = Investigate();
+                StartCoroutine(CoInvestigate);
+            }
+        }
     }
 
     private IEnumerator ShortGoalStop()
@@ -108,7 +138,7 @@ public class Guard : MonoBehaviour
     private IEnumerator LongGoalStop()
     {
         yield return new WaitForSeconds(1.0f);
-        DetectionRange = BaseDetectionRange * 2;
+        DetectionRange = BaseDetectionRange * 1.5f;
         yield return new WaitForSeconds(2.0f);
         DetectionRange = BaseDetectionRange;
         Agent.destination = CurrentGoal.position;
@@ -117,12 +147,16 @@ public class Guard : MonoBehaviour
     // Setting areaMask to -1 allows the guard to walk off the path
     private IEnumerator Alerted()
     {
+        IsInvestigating = false;
         IsAlerted = true;
         Agent.destination = transform.position;
         Agent.areaMask = -1;
-        DetectionRange = BaseDetectionRange;
-        yield return new WaitForSeconds(1.0f);
-        Agent.destination = PlayerTransform.position;
+        CurrentInvestigation = PlayerTransform.position;
+        yield return new WaitForSeconds(1.0f * ReactionMultiplier);
+        IsInvestigating = true;
+        CatchRange = BaseCatchRange * 2.0f;
+        DetectionRange = 0;
+        Agent.destination = CurrentInvestigation;
     }
 
     private IEnumerator Caught()
@@ -130,12 +164,26 @@ public class Guard : MonoBehaviour
         Agent.destination = transform.position;
         AlertCooldown = true;
         IsAlerted = false;
-        yield return new WaitForSeconds(1.0f);
+        IsInvestigating = false;
         Debug.Log("got you");
+        yield return new WaitForSeconds(1.0f);
         Debug.Log("returning to route");
         Agent.destination = CurrentGoal.position;
         yield return new WaitForSeconds(5.0f);
         AlertCooldown = false;
+    }
+
+    private IEnumerator Investigate()
+    {
+        Debug.Log("Investigate Start");
+        IsAlerted = false;
+        IsInvestigating = false;
+        yield return new WaitForSeconds(0.5f);
+        DetectionRange = BaseDetectionRange * 1.5f;
+        yield return new WaitForSeconds(3.0f);
+        DetectionRange = BaseDetectionRange;
+        Agent.destination = CurrentGoal.position;
+        Debug.Log("Investigate End");
     }
     
     private IEnumerator Evidence()
@@ -154,6 +202,7 @@ public class Guard : MonoBehaviour
         LookoutGoals = InLookoutGoals;
 
         BaseDetectionRange = DetectionRange;
+        BaseCatchRange = CatchRange;
 
         Player = GameObject.FindGameObjectWithTag("Player");
         PlayerTransform = Player.GetComponent<Transform>();
