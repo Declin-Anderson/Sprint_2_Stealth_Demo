@@ -22,7 +22,7 @@ public class Guard : MonoBehaviour
     private int RouteCheckpoint = 1;
 
     // The distance the guard has to be from the player to be alerted (Does not catch the player yet)
-    public float DetectionRange = 4.0f;
+    public float DetectionRange = 5.0f;
 
     // The base detection range without any modifiers
     private float BaseDetectionRange;
@@ -154,7 +154,7 @@ public class Guard : MonoBehaviour
         CurrentInvestigation = PlayerTransform.position;
         yield return new WaitForSeconds(1.0f * ReactionMultiplier);
         IsInvestigating = true;
-        CatchRange = BaseCatchRange * 2.0f;
+        CatchRange = BaseCatchRange * 3.0f;
         DetectionRange = 0;
         Agent.destination = CurrentInvestigation;
     }

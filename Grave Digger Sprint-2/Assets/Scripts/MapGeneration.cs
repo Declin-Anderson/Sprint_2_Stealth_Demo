@@ -9,7 +9,7 @@ public class MapGeneration : MonoBehaviour
     private GameObject Parent;
 
     // Public array of all possible tile objects for map generation
-    // [0 = Entrance Tile, 1 = Path Tile, 2 = Grass Tile]
+    // [0 = Entrance Tile, 1 = Path Tile, 2 = Grass Tile, 3 = Fence Tile]
     public GameObject[] Tiles;
 
     public GameObject Guard;
@@ -54,6 +54,10 @@ public class MapGeneration : MonoBehaviour
         MapLayout[3, 5] = 1;
         MapLayout[3, 4] = 1;
         MapLayout[3, 3] = 1;
+        MapLayout[3, 0] = 3;
+        MapLayout[1, 0] = 3;
+        MapLayout[2, 1] = 3;
+        MapLayout[2, 0] = 3;
         MapLayout[GraveyardEntrancePos[0], GraveyardEntrancePos[1]] = -2;
 
         for (int i = 0; i < GraveyardWidth; i++)
@@ -92,6 +96,8 @@ public class MapGeneration : MonoBehaviour
         
     }
 
+    // Uses the MapLayout array to create a map of the associated tiles, if the tile is a fence, it will gather its adjecent
+    // tiles and pass them to the tile's script
     public void GenerateMap(int[,] Layout)
     {
         MapLayout = Layout;
@@ -117,6 +123,29 @@ public class MapGeneration : MonoBehaviour
 
                     TileMap[i, j] = Instantiate(Tiles[MapLayout[i, j]], NewTilePos, Quaternion.identity);
                     TileMap[i, j].transform.parent = Parent.transform;
+
+                    if (MapLayout[i, j] == 3)
+                    {
+                        int[] Connections = new int[] { -1, -1, -1, -1 };
+                        if (j < GraveyardLength - 1)
+                        {
+                            Connections[0] = MapLayout[i, j + 1];
+                        }
+                        if (i < GraveyardWidth - 1)
+                        {
+                            Connections[1] = MapLayout[i + 1, j];
+                        }
+                        if (j > 0)
+                        {
+                            Connections[2] = MapLayout[i, j - 1];
+                        }
+                        if (i > 0)
+                        {
+                            Connections[3] = MapLayout[i - 1, j];
+                        }
+
+                        TileMap[i, j].GetComponent<FenceTile>().GenerateFence(Connections);
+                    }
                 }
             }
         }
