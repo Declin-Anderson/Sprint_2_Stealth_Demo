@@ -1274,6 +1274,31 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1027853587}
   m_CullTransparentMesh: 1
+--- !u!1 &1065256924 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7452054455304178336, guid: 825525d610e0a1440be74cae97cb2fa5, type: 3}
+  m_PrefabInstance: {fileID: 1425399885}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1065256925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1065256924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65559fcaa0d72c441a4506b4dee4855e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Tiles:
+  - {fileID: 8819260287311184075, guid: 21492a770815e684daae93e8837ad4aa, type: 3}
+  - {fileID: 161724354230514276, guid: 7a1f41dcc11634f4a88c1ac02a168892, type: 3}
+  - {fileID: 5340949096970403946, guid: eaade790837515a40a8f26e154b7638e, type: 3}
+  - {fileID: 5460949448803143914, guid: 2dd065fdcb9552241b499fd612d27fed, type: 3}
+  Guard: {fileID: 2877463688504599978, guid: 62a94317a559a1d4da334992127c3823, type: 3}
+  MapImage: {fileID: 2800000, guid: 876020247ff9d4540b6a3d23bcd6f1dd, type: 3}
+  MapColor: 0
 --- !u!1 &1180235618
 GameObject:
   m_ObjectHideFlags: 0
@@ -1491,6 +1516,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 498672270}
     m_Modifications:
+    - target: {fileID: 37325451531953387, guid: 825525d610e0a1440be74cae97cb2fa5, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7452054455304178336, guid: 825525d610e0a1440be74cae97cb2fa5, type: 3}
       propertyPath: m_Name
       value: Main_Entrance_Tile
